@@ -176,7 +176,7 @@ class Reporting extends AbstractActor {
 
 					return new WP_Error( '500', 'Failed to parse URL scheme, ignored.' );
 				}
-				if ( 'http' !== \mb_strtolower( $scheme ) ) {
+				if ( ! \in_array( \mb_strtolower( $scheme ), array( 'http', 'https' ) ) ) {
 					\trigger_error( 'invalid scheme!', \E_USER_WARNING );
 					\trigger_error( \print_r( $scheme, true ), \E_USER_WARNING );
 
