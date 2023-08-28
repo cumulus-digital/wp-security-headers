@@ -103,15 +103,15 @@ class Reporting extends AbstractActor {
 		\header( 'X-Content-Type-Options: nosniff' );
 
 		if ( ! $this->isActive() ) {
-			return \wp_send_json_error( array( 'success' => false, 'error' => 'CSP Reporting is not active.' ), 400 );
+			return \wp_send_json_error( array( 'error' => 'CSP Reporting is not active.' ), 400 );
 		}
 		if ( 'POST' !== $_SERVER['REQUEST_METHOD'] ) {
-			return \wp_send_json_error( array( 'success' => false, 'error' => 'CSP Reports must be POST requests.' ), 403 );
+			return \wp_send_json_error( array( 'error' => 'CSP Reports must be POST requests.' ), 403 );
 		}
 
 		$data = \json_decode( \file_get_contents( 'php://input' ), true );
 		if ( ! $data || ! isset( $data['csp-report'] ) ) {
-			return \wp_send_json_error( array( 'success' => false, 'error' => 'Received invalid report.' ), 403 );
+			return \wp_send_json_error( array( 'error' => 'Received invalid report.' ), 403 );
 		}
 		$data = $data['csp-report'];
 
@@ -149,7 +149,7 @@ class Reporting extends AbstractActor {
 		\trigger_error( 'Error logging CSP report!', \E_USER_WARNING );
 		\trigger_error( $wpdb->last_error, \E_USER_WARNING );
 
-		return \wp_send_json_error( array( 'success' => false, 'error' => 'Failed to log report.' ), 500 );
+		return \wp_send_json_error( array( 'error' => 'Failed to log report.' ), 500 );
 	}
 
 	public function validateReport( $report ) {
@@ -174,7 +174,7 @@ class Reporting extends AbstractActor {
 					\trigger_error( 'Failed parsing URL scheme!', \E_USER_WARNING );
 					\trigger_error( \print_r( $scheme, true ), \E_USER_WARNING );
 
-					return new WP_Error( '500', 'Failed to parse URL scheme, ignored.' );
+					return new WP_Error( '200', 'Failed to parse URL scheme, ignored.' );
 				}
 				if ( ! \in_array( \mb_strtolower( $scheme ), array( 'http', 'https' ) ) ) {
 					\trigger_error( 'invalid scheme!', \E_USER_WARNING );

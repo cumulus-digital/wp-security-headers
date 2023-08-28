@@ -124,10 +124,10 @@ class Dashboard extends AbstractSettingsHandler {
 
 	public function flushReports() {
 		if ( ! \is_admin() || ! \current_user_can( 'switch_themes' ) ) {
-			return \wp_send_json_error( array( 'success' => false, 'error' => 'Access denied.' ), 403 );
+			return \wp_send_json_error( array( 'error' => 'Access denied.' ), 403 );
 		}
 		if ( ! \in_array( $_SERVER['REQUEST_METHOD'], array( 'POST', 'DELETE' ) ) ) {
-			return \wp_send_json_error( array( 'success' => false, 'error' => 'DELETE/POST access only.' ), 403 );
+			return \wp_send_json_error( array( 'error' => 'DELETE/POST access only.' ), 403 );
 		}
 
 		global $wpdb;
@@ -139,17 +139,17 @@ class Dashboard extends AbstractSettingsHandler {
 
 	public function fetchReports() {
 		if ( ! \is_admin() || ! \current_user_can( 'switch_themes' ) ) {
-			return \wp_send_json_error( array( 'success' => false, 'error' => 'Access denied.' ), 403 );
+			return \wp_send_json_error( array( 'error' => 'Access denied.' ), 403 );
 		}
 
 		$message = null;
 
 		if ( ! $this->cspReportSetting->isActive() ) {
 			$message = 'CSP Reporting is currently disabled.';
-			// return \wp_send_json_error( array( 'success' => false, 'error' => 'CSP Reporting is not active.' ), 400 );
+			// return \wp_send_json_error( array( 'error' => 'CSP Reporting is not active.' ), 400 );
 		}
 		if ( 'GET' !== $_SERVER['REQUEST_METHOD'] ) {
-			return \wp_send_json_error( array( 'success' => false, 'error' => 'GET access only.' ), 403 );
+			return \wp_send_json_error( array( 'error' => 'GET access only.' ), 403 );
 		}
 
 		$per_page = \array_key_exists( 'pp', $_GET ) ? \intval( $_GET['pp'] ) : 10          ?? 10;
@@ -214,6 +214,6 @@ class Dashboard extends AbstractSettingsHandler {
 			) );
 		}
 
-		return \wp_send_json_error( array( 'success' => false, 'error' => 'No reports available.' ), 400 );
+		return \wp_send_json_error( array( 'error' => 'No reports available.', 'message' => $message ), 200 );
 	}
 }
