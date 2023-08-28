@@ -38,6 +38,8 @@ class AutoNonce extends AbstractActor {
 			debug( 'Auto-Nonce is ACTIVE' );
 
 			// When auto-nonce is active, we need to ensure HTML is not cached.
+			\header( 'Cache-Control: max-age=0, no-cache, no-store, must-revalidate' );
+			\header( 'Pragme: no-cache' );
 			\header( 'Expires: Wed, 11 Jan 1984 05:00:00 GMT' );
 		}
 	}
