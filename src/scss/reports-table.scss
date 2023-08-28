@@ -1,0 +1,108 @@
+//:host {
+@import "@vueform/multiselect/themes/default";
+//@import "vue3-easy-data-table/dist/style.css";
+
+.vue3-easy-data-table {
+	--ms-font-size: 14px;
+	--easy-table-footer-font-size: 15px;
+	--easy-table-footer-height: auto;
+	--easy-table-footer-padding: 5px 10px;
+	--easy-table-rows-per-page-selector-z-index: 2;
+	--easy-table-body-item-padding: 0.5em 0.25em;
+	--easy-table-header-item-padding: 0.5em 0.25em;
+}
+
+.vue3-easy-data-table {
+	td {
+		vertical-align: text-top;
+		line-height: 1.2;
+	}
+	.arrow {
+		position: relative;
+		margin-left: auto;
+		bottom: auto;
+	}
+	td.expand {
+		background: #eaeaea;
+		border: 2px solid #fff;
+		border-top: 0;
+		border-bottom: 0;
+		padding: 0.75em;
+
+		.uagent + .raw-report {
+			margin-top: 1em;
+		}
+		.raw-report {
+			background: #000;
+			color: #eee;
+			padding: 1em;
+
+			h2 {
+				font-size: inherit;
+			}
+			pre {
+				max-width: 100%;
+				margin: 0;
+				white-space: pre-wrap;
+				overflow-x: scroll;
+			}
+		}
+	}
+	.buttons-pagination {
+		margin: 2px 0;
+		.item.button {
+			padding: 5px 10px;
+		}
+	}
+	.pagination__rows-per-page {
+		//display: none !important;
+	}
+}
+:host .vue3-easy-data-table__message {
+	font-size: 150%;
+}
+
+.functions {
+	display: flex;
+	align-items: center;
+	gap: 1.5em;
+	background: #444;
+	color: #fff;
+	padding: 10px;
+	font-size: 14px;
+
+	> div {
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+		gap: 0.5em;
+	}
+
+	> button {
+		cursor: pointer;
+		background: #fff;
+		color: #000;
+		border: none;
+		border-radius: 3px;
+		padding: 0.9em 1em;
+	}
+
+	.multiselect {
+		color: #000;
+		min-width: 150px;
+		max-width: 100%;
+		margin: 0;
+	}
+
+	&.secondary {
+		background: #eee;
+		justify-content: space-between;
+	}
+	.flush-reports {
+		font-size: 13px;
+		padding: 6px 8px;
+		background: #ddd;
+	}
+}
+//}

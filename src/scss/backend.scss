@@ -1,0 +1,170 @@
+.regular-text.medium {
+	width: 30em;
+	max-width: 100%;
+}
+.regular-text.wide {
+	width: 60em;
+	max-width: 100%;
+}
+
+.html-field {
+	max-width: 600px;
+}
+
+@media screen and (max-width: 782px) {
+	.wpsf-tab .wpsf-section-description {
+		padding: 1em;
+		margin: 0;
+	}
+}
+
+.callout {
+	background: rgba(0, 0, 0, 0.1);
+	padding: 0.5em 1em;
+	max-width: 600px;
+
+	> :first-child {
+		margin-top: 0 !important;
+	}
+}
+
+h2 > span[id^="#"] {
+	position: relative;
+	top: -65px;
+}
+
+span.desc {
+	max-width: 60ch;
+
+	div {
+		display: block;
+		max-width: 60ch;
+		margin-top: 1em;
+	}
+}
+
+.wpsf-group__row.alternate {
+	background-color: initial;
+}
+.wpsf-group__row:nth-of-type(odd) {
+	background-color: #f6f7f7;
+}
+
+.wpsf-group__row[draggable="true"] {
+	user-select: none;
+}
+.wpsf-group__row:first-child .wpsf-group__row-remove {
+	display: inline !important;
+}
+.wpsf-group__row:only-of-type .wpsf-group__row-remove {
+	display: none !important;
+}
+
+:root .wpsf-section-description--policies + table.form-table {
+	min-width: calc(100% - 2.5em);
+
+	@media (min-width: 800px) {
+		min-width: auto;
+	}
+
+	> tbody > tr:nth-of-type(odd) {
+		&:not(:first-of-type) {
+			border-top: 1px solid #ccc;
+		}
+
+		display: flex;
+		justify-content: space-between;
+		gap: 1.5em;
+
+		@media (min-width: 800px) {
+			display: table-row;
+		}
+	}
+	@media (max-width: 800px) {
+		> tbody > tr:nth-of-type(even) {
+			> th {
+				display: none;
+			}
+			> td {
+				width: 100%;
+			}
+		}
+	}
+
+	.wpsf-group__row-index {
+		user-select: none;
+
+		span {
+			color: transparent;
+		}
+	}
+
+	.wpsf-group__row td {
+		display: table-cell;
+
+		&.wpsf-group__row-index {
+			display: none;
+
+			@media (min-width: 800px) {
+				display: table-cell;
+			}
+		}
+	}
+}
+
+table.policies {
+	.wpsf-group__field-wrapper {
+		border-bottom: 0;
+		padding: 5px;
+
+		display: flex;
+		align-items: center;
+		gap: 0.75em;
+
+		label {
+			margin: 0;
+			width: 3rem;
+		}
+
+		&:last-child {
+			opacity: 0.6;
+			label {
+				font-size: 90%;
+			}
+		}
+	}
+}
+
+:root .wpsf-section-description--reporting {
+	display: none !important;
+
+	+ table tbody {
+		display: flex;
+		flex-wrap: wrap;
+
+		@media (min-width: 800px) {
+			gap: 2em;
+		}
+
+		tr {
+			display: flex;
+			//flex-direction: row-reverse;
+			gap: 1em;
+
+			@media (min-width: 800px) {
+				gap: 0;
+				padding-left: 2em;
+
+				&:first-child {
+					padding-left: 0;
+				}
+			}
+
+			&:last-of-type {
+				display: table-row;
+				padding-left: 0;
+				width: 100%;
+			}
+		}
+	}
+}

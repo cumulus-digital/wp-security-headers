@@ -1,0 +1,100 @@
+{
+    "name": "cumulus-digital/wp-security-headers",
+    "description": "Manages a handful of security-related HTTP headers",
+    "license": "UNLICENSED",
+    "authors": [
+        {
+            "name": "Daniel Vena",
+            "email": "daniel.vena@cumulus.com"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "cumulus-digital/wp-php-cs-fixer",
+                "version": "1.0.2",
+                "type": "library",
+                "source": {
+                    "url": "https://github.com/cumulus-digital/wp-php-cs-fixer.git",
+                    "type": "git",
+                    "reference": "master"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "jamesckemp/wordpress-settings-framework",
+                "version": "master",
+                "type": "library",
+                "source": {
+                    "url": "https://github.com/jamesckemp/Wordpress-Settings-Framework.git",
+                    "type": "git",
+                    "reference": "master"
+                }
+            }
+        }
+    ],
+    "require-dev": {
+        "brianhenryie/strauss": "^0.14.0",
+        "cumulus-digital/wp-php-cs-fixer": "^1",
+        "friendsofphp/php-cs-fixer": "^3.18"
+    },
+    "require": {
+        "jamesckemp/wordpress-settings-framework": "dev-master"
+    },
+    "scripts": {
+        "strauss": [
+            "vendor/bin/strauss"
+        ],
+        "post-install-cmd": [
+            "@strauss"
+        ],
+        "post-update-cmd": [
+            "@strauss"
+        ]
+    },
+    "extra": {
+        "strauss": {
+            "delete_vendor_packages": true,
+            "namespace_prefix": "CUMULUS\\Wordpress\\SecurityHeaders\\Vendors\\",
+            "classmap_prefix": "CWSH_",
+            "constant_prefix": "CWSH_",
+            "exclude_from_prefix": {
+                "packages": [
+                    "htmlburger/carbon-fields"
+                ]
+            },
+            "override_autoload": {
+                "jamesckemp/wordpress-settings-framework": {
+                    "files": [
+                        "wp-settings-framework.php",
+                        "assets"
+                    ]
+                },
+                "htmlburger/carbon-fields": {
+                    "psr-4": {
+                        "Carbon_Fields\\": "core/"
+                    },
+                    "files": [
+                        "config.php",
+                        "templates",
+                        "assets",
+                        "build"
+                    ]
+                }
+            }
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "automattic/jetpack-autoloader": true
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "CUMULUS\\Wordpress\\SecurityHeaders\\": "src/php"
+        }
+    }
+}
