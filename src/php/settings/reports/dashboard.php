@@ -13,7 +13,6 @@ use CUMULUS\Wordpress\SecurityHeaders\Installer;
 use const CUMULUS\Wordpress\SecurityHeaders\PREFIX;
 use CUMULUS\Wordpress\SecurityHeaders\Settings\AbstractSettingsHandler;
 use CUMULUS\Wordpress\SecurityHeaders\Settings\SettingsRegister;
-use WP_Error;
 
 class Dashboard extends AbstractSettingsHandler {
 	protected $tab = 'reports';
@@ -125,10 +124,10 @@ class Dashboard extends AbstractSettingsHandler {
 
 	public function flushReports() {
 		if ( ! \is_admin() || ! \current_user_can( 'switch_themes' ) ) {
-			return \wp_send_json_error( new WP_Error( '403', 'Access denied.' ) );
+			return \wp_send_json_error( array( 'success' => false, 'error' => 'Access denied.' ), 403 );
 		}
 		if ( ! \in_array( $_SERVER['REQUEST_METHOD'], array( 'POST', 'DELETE' ) ) ) {
-			return \wp_send_json_error( new WP_Error( '403', 'DELETE/POST access only.' ) );
+			return \wp_send_json_error( array( 'success' => false, 'error' => 'DELETE/POST access only.' ), 403 );
 		}
 
 		global $wpdb;
@@ -140,14 +139,17 @@ class Dashboard extends AbstractSettingsHandler {
 
 	public function fetchReports() {
 		if ( ! \is_admin() || ! \current_user_can( 'switch_themes' ) ) {
-			return \wp_send_json_error( new WP_Error( '403', 'Access denied.' ) );
+			return \wp_send_json_error( array( 'success' => false, 'error' => 'Access denied.' ), 403 );
 		}
 
+		$message = null;
+
 		if ( ! $this->cspReportSetting->isActive() ) {
-			return \wp_send_json_error( new WP_Error( '400', 'CSP Reporting is not active.' ) );
+			$message = 'CSP Reporting is currently disabled.';
+			// return \wp_send_json_error( array( 'success' => false, 'error' => 'CSP Reporting is not active.' ), 400 );
 		}
 		if ( 'GET' !== $_SERVER['REQUEST_METHOD'] ) {
-			return \wp_send_json_error( new WP_Error( '403', 'GET access only.' ) );
+			return \wp_send_json_error( array( 'success' => false, 'error' => 'GET access only.' ), 403 );
 		}
 
 		$per_page = \array_key_exists( 'pp', $_GET ) ? \intval( $_GET['pp'] ) : 10          ?? 10;
@@ -208,9 +210,10 @@ class Dashboard extends AbstractSettingsHandler {
 				'page'     => $page + 1,
 				'per_page' => $per_page,
 				'total'    => \intval( $total ),
+				'message'  => $message,
 			) );
 		}
 
-		return \wp_send_json_error( array( 'error' => 'No reports found.' ) );
+		return \wp_send_json_error( array( 'success' => false, 'error' => 'No reports available.' ), 400 );
 	}
 }

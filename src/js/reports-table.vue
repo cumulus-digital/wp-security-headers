@@ -12,6 +12,7 @@
 				placeholder="Showing all"
 			/>
 		</div>
+		<div v-if="statusMessage">{{ statusMessage }}</div>
 	</div>
 	<EasyDataTable
 		v-model:server-options="serverOptions"
@@ -107,6 +108,8 @@ export default defineComponent({
 			return window.cmls_wpsh_ajax.shadow_styles || [];
 		});
 
+		const statusMessage = ref('');
+
 		const errorMessage = ref('');
 
 		const loading = ref(false);
@@ -124,19 +127,23 @@ export default defineComponent({
 						})
 					}
 				);
+				const { success, data } = await response.json();
 				if (!response.ok) {
-					throw new Error(response.status);
+					throw new Error(data.error);
 				}
-				const { data } = await response.json();
-				if (data.error) {
+				if (!success || data.error) {
 					errorMessage.value = data.error;
 					serverItemsLength.value = 0;
 					items.value = [];
 				} else {
 					items.value = data.items;
 					serverItemsLength.value = data.total;
+					if (data.message) {
+						statusMessage.value = data.message;
+					}
 				}
 			} catch (error) {
+				console.log(error);
 				errorMessage.value = error.message;
 				serverItemsLength.value = 0;
 			}
@@ -194,6 +201,7 @@ export default defineComponent({
 			serverItemsLength,
 			restApiUrl,
 			errorMessage,
+			statusMessage,
 			loading,
 			loadFromServer,
 			flushServer

@@ -103,21 +103,21 @@ class Reporting extends AbstractActor {
 		\header( 'X-Content-Type-Options: nosniff' );
 
 		if ( ! $this->isActive() ) {
-			return \wp_send_json_error( new WP_Error( '400', 'CSP Reporting is not active.' ) );
+			return \wp_send_json_error( array( 'success' => false, 'error' => 'CSP Reporting is not active.' ), 400 );
 		}
 		if ( 'POST' !== $_SERVER['REQUEST_METHOD'] ) {
-			return \wp_send_json_error( new WP_Error( '403', 'CSP reports must be POST requests.' ) );
+			return \wp_send_json_error( array( 'success' => false, 'error' => 'CSP Reports must be POST requests.' ), 403 );
 		}
 
 		$data = \json_decode( \file_get_contents( 'php://input' ), true );
 		if ( ! $data || ! isset( $data['csp-report'] ) ) {
-			return \wp_send_json_error( new WP_Error( '403', 'Received invalid report.' ) );
+			return \wp_send_json_error( array( 'success' => false, 'error' => 'Received invalid report.' ), 403 );
 		}
 		$data = $data['csp-report'];
 
 		$clean_data = $this->validateReport( $data );
 		if ( \is_wp_error( $clean_data ) ) {
-			return \wp_send_json_error( $clean_data );
+			return \wp_send_json_error( $clean_data, 400 );
 		}
 
 		$user_agent = $_SERVER['HTTP_USER_AGENT'];
@@ -149,7 +149,7 @@ class Reporting extends AbstractActor {
 		\trigger_error( 'Error logging CSP report!', \E_USER_WARNING );
 		\trigger_error( $wpdb->last_error, \E_USER_WARNING );
 
-		return \wp_send_json_error( new WP_Error( '500', 'Could not log report.' ) );
+		return \wp_send_json_error( array( 'success' => false, 'error' => 'Failed to log report.' ), 500 );
 	}
 
 	public function validateReport( $report ) {
