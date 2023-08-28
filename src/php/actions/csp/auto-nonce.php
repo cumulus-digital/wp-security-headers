@@ -36,6 +36,9 @@ class AutoNonce extends AbstractActor {
 	public function sendHeaders() {
 		if ( $this->isActive() ) {
 			debug( 'Auto-Nonce is ACTIVE' );
+
+			// When auto-nonce is active, we need to ensure HTML is not cached.
+			\header( 'Expires: Wed, 11 Jan 1984 05:00:00 GMT' );
 		}
 	}
 
