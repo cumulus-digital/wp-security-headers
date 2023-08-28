@@ -3,7 +3,7 @@ src/php/settings_old
 
 # Composer
 vendor/
-!vendor-prefixed/
+!vendor-prefixed/**/*
 
 # npm
 node_modules/
