@@ -117,7 +117,7 @@ class Reporting extends AbstractActor {
 
 		$clean_data = $this->validateReport( $data );
 		if ( \is_wp_error( $clean_data ) ) {
-			return \wp_send_json_error( $clean_data, 400 );
+			return \wp_send_json_error( $clean_data->get_error_message(), $clean_data->get_error_code() );
 		}
 
 		$user_agent = $_SERVER['HTTP_USER_AGENT'];
@@ -170,11 +170,17 @@ class Reporting extends AbstractActor {
 		foreach ( array( 'document-uri', 'source-file', 'blocked-uri' ) as $key ) {
 			if ( \array_key_exists( $key, $report ) && 'inline' !== $report[$key] ) {
 				$scheme = \parse_url( $report[$key], \PHP_URL_SCHEME );
-				if ( ! $scheme || 'http' !== \mb_strtolower( $scheme ) ) {
+				if ( ! $scheme ) {
+					\trigger_error( 'Failed parsing URL scheme!', \E_USER_WARNING );
+					\trigger_error( \print_r( $scheme, true ), \E_USER_WARNING );
+
+					return new WP_Error( '500', 'Failed to parse URL scheme, ignored.' );
+				}
+				if ( 'http' !== \mb_strtolower( $scheme ) ) {
 					\trigger_error( 'invalid scheme!', \E_USER_WARNING );
 					\trigger_error( \print_r( $scheme, true ), \E_USER_WARNING );
 
-					return new WP_Error( '200', 'Ignored.' );
+					return new WP_Error( '200', 'Ignored due to non-browser URL scheme.' );
 				}
 			}
 		}
