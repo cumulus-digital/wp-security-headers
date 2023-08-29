@@ -63,14 +63,15 @@ class AutoNonce extends AbstractSettingsHandler {
 
 				<blockquote class="callout">
 					<p>
-						Using this feature implies that the output of WordPress can be trusted.
+						Using this feature implies that the output of registered scripts and styles
+						from WordPress and plugins can be trusted.
 					</p>
 				</blockquote>
 
 				<blockquote class="callout">
 					<p>
-						Using this feature along with front-end caching may be insecure. If you are
-						using caching, it may be better to
+						Using this feature along with front-end caching may be broken orinsecure. If you are
+						using caching, it is better to
 						<a href="https://content-security-policy.com/hash/" target="_blank" rel="noopener">
 							generate hashes for included resources
 						</a>
@@ -180,14 +181,13 @@ class AutoNonce extends AbstractSettingsHandler {
 					'desc'    => '
 						<div>
 							<p>
+								<span class="error-message"WARNING:</span>
 								Parsing full responses uses output buffering to store and manipulate
-								the entire output of a page. This may increase memory usage, as well
-								as result in broken pages. Use with caution!
-							</p>
-							<p>
-								Due to the various ways WordPress and plugins may output HTML, parsing the
-								entire output of WordPress is the surest way to ensure a nonce is added
-								to all scripts and styles. <strong>All previous warnings apply</strong>.
+								the <em>entire output</em> of a page, including where user input has
+								been accepted and displayed. <strong>This is often insecure</strong>,
+								and may result in increased memory usage, as well as broken pages.
+								<strong>Use with caution</strong> and only as a last-resort or for
+								testing.
 							</p>
 						</div>
 					',
