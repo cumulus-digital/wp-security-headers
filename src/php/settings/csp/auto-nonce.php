@@ -181,7 +181,7 @@ class AutoNonce extends AbstractSettingsHandler {
 					'desc'    => '
 						<div>
 							<p>
-								<span class="error-message"WARNING:</span>
+								<span class="error-message">WARNING:</span>
 								Parsing full responses uses output buffering to store and manipulate
 								the <em>entire output</em> of a page, including where user input has
 								been accepted and displayed. <strong>This is often insecure</strong>,
