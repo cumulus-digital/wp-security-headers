@@ -8,8 +8,8 @@ use const CUMULUS\Wordpress\SecurityHeaders\PREFIX;
 
 class SettingsRegister {
 	/**
-	 * Holds reference to WPSF instance.
-	 */
+		 * Holds reference to WPSF instance.
+		 */
 	private static $wpsf;
 
 	/**
@@ -121,7 +121,7 @@ class SettingsRegister {
 		$default = self::getDefault( $section, $field );
 		$key     = "{$section}_{$field}";
 
-		if ( \array_key_exists( $key, $options ) ) {
+		if ( \is_array( $options ) && \array_key_exists( $key, $options ) ) {
 			if ( \is_bool( $default ) ) {
 				return \boolval( $options[$key] );
 			}

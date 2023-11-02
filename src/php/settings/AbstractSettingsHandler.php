@@ -113,13 +113,13 @@ abstract class AbstractSettingsHandler {
 	 */
 	public function runValidations( $validations, $input ) {
 		foreach ( $validations as $validate ) {
-			if ( ! \array_key_exists( 'id', $validate ) ) {
+			if ( \is_array( $validate ) && ! \array_key_exists( 'id', $validate ) ) {
 				\trigger_error( 'Validations must supply a setting id!', \E_USER_WARNING );
 
 				return;
 			}
 
-			if ( ! \array_key_exists( 'callback', $validate ) ) {
+			if ( \is_array( $validate ) && ! \array_key_exists( 'callback', $validate ) ) {
 				\trigger_error( 'Validation supplied without a callback', \E_USER_WARNING );
 
 				return;
@@ -128,7 +128,8 @@ abstract class AbstractSettingsHandler {
 			$original_key = $this->getSectionId() . '_' . $validate['id'];
 
 			if (
-				\array_key_exists( $original_key, $input )
+				\is_array( $input )
+				&& \array_key_exists( $original_key, $input )
 				&& \is_callable( $validate['callback'] )
 			) {
 				$input[$original_key] = $validate['callback']( $input[$original_key] );

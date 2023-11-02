@@ -168,7 +168,7 @@ class Reporting extends AbstractActor {
 
 		// Check for browser-specific URL schemes
 		foreach ( array( 'document-uri', 'source-file', 'blocked-uri' ) as $key ) {
-			if ( \array_key_exists( $key, $report ) && 'inline' !== $report[$key] ) {
+			if ( \is_array( $report ) && \array_key_exists( $key, $report ) && 'inline' !== $report[$key] ) {
 				$scheme = \parse_url( $report[$key], \PHP_URL_SCHEME );
 				if ( ! $scheme ) {
 					\trigger_error( 'Failed parsing URL scheme!', \E_USER_WARNING );
@@ -198,7 +198,7 @@ class Reporting extends AbstractActor {
 		$report_issue = true;
 		foreach ( $filters as $filter_check => $options ) {
 			$filter_on = $report[$options['filter_on']] ?? false;
-			if ( ! $filter_on || ! \array_key_exists( $filter_on, $report ) ) {
+			if ( ! $filter_on || ( \is_array( $report ) && ! \array_key_exists( $filter_on, $report ) ) ) {
 				continue;
 			}
 			if ( false !== \mb_strpos( $report[$filter_on], $filter_check ) ) {

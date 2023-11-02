@@ -12,12 +12,12 @@ use CWSH_WordpressSettingsFramework;
  */
 class Framework extends CWSH_WordpressSettingsFramework {
 	/**
-	 * Output raw HTML.
-	 *
-	 * @param array $args Add html to output to 'html' key
-	 */
+		 * Output raw HTML.
+		 *
+		 * @param array $args Add html to output to 'html' key
+		 */
 	public function generate_html_field( $args ) {
-		if ( \array_key_exists( 'html', $args ) ) {
+		if ( \is_array( $args ) && \array_key_exists( 'html', $args ) ) {
 			if ( \array_key_exists( 'raw', $args ) && true === $args['raw'] ) {
 				echo $args['html'];
 			} else {
@@ -47,7 +47,7 @@ class Framework extends CWSH_WordpressSettingsFramework {
 			value="<?php echo $args['value']; ?>"
 			placeholder="<?php echo \esc_attr( $args['placeholder'] ); ?>"
 			class="regular-text <?php echo \esc_attr( $args['class'] ); ?>"
-			<?php if ( \array_key_exists( 'attributes', $args ) ): ?>
+			<?php if ( is_array($args) && \array_key_exists( 'attributes', $args ) ): ?>
 				<?php foreach( $args['attributes'] as $attr => $aval ): ?>
 					<?php echo \esc_html( $attr ); ?>="<?php echo \esc_attr( $aval ); ?>"
 				<?php endforeach; ?>
