@@ -20,11 +20,11 @@ class MaskHeaders extends AbstractActor {
 	public function sendHeaders() {
 		if ( $this->getSetting( 'x-powered-by' ) ) {
 			@\ini_set( 'expose_php', 'off' );
-			\header( 'X-Powered-By: Unicorns' );
+			\header( 'X-Powered-By: Unicorns', true );
 		}
 
 		if ( $this->getSetting( 'server' ) ) {
-			\header( 'Server: Rainbows' );
+			\header( 'Server: Rainbows', true );
 		}
 	}
 }

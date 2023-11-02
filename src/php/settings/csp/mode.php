@@ -36,7 +36,9 @@ class Mode extends AbstractSettingsHandler {
 						'title' => 'Enable CSP',
 						'type'  => 'select',
 						'desc'  => '
-							<strong class="error-message">Be sure to test before enabling!</strong>
+							<p>
+								<strong class="error-message">Be sure to test before enabling!</strong>
+							</p>
 						',
 						'choices' => array(
 							''        => 'Disabled',

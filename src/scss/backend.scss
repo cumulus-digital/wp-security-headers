@@ -33,14 +33,34 @@ h2 > span[id^="#"] {
 	top: -65px;
 }
 
-span.desc {
+div.desc, span.desc {
 	max-width: 60ch;
 
-	div {
+	dt,dd {
 		display: block;
-		max-width: 60ch;
-		margin-top: 1em;
+		padding-inline-start: 1em;
+		border-left: 3px solid #ddd;
+
+		p {
+			margin-top: 0;
+			margin-bottom: .5em;
+			&:last-of-type {
+				margin-bottom: 0;
+			}
+		}
 	}
+	dt {
+		border-color: #888;
+		font-weight: bold;
+	}
+	dd {
+		margin: 0 0 .65em;
+	}
+}
+span.desc > div {
+	display: block;
+	max-width: 60ch;
+	margin-top: 1em;
 }
 
 .wpsf-group__row.alternate {

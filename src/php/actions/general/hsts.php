@@ -32,7 +32,7 @@ class HSTS extends AbstractActor {
 				$value .= '; preload';
 			}
 
-			\header( "Strict-Transport-Security: {$value}" );
+			\header( "Strict-Transport-Security: {$value}", true );
 		}
 	}
 }
