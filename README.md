@@ -23,8 +23,12 @@ Actors are otherwise free to register their own actions on any WP hook.
 When CSP and auto-noncing is active, filters and a nonce shortcode become available.
 
 ### Filter
-* `cmls_wpsh_filter_scripts` - Filters a given HTML fragment, applying nonces where appropriate.
+* `cmls_wpsh_filter_scripts` - Filters a given HTML fragment, applying nonces to tags where appropriate.
 
-### Shortcode
+### Shortcodes
 
-If auto-noncing is enabled and in code which processes output for shortcodes, the nonce for the current request can be added using `[cmls_wpsh_noce]`.
+**Note:** WordPress *does not* support shortcodes within HTML attributes.
+
+* `[cmls_wpsh_nonce]` - Outputs the nonce generated for the current request
+* `[cmls_wpsh_tag tag="link"]...[/cmls_wpsh_tag]` - Generic tag shortcode, allowing for the output of any HTML tag with nonce including attributes and content. If no content and closing shortcode is provided, only the opening tag will be generated and it will be up to you to close it. Be aware that noncing applies only to a limited number of HTML tags.
+* `[cmls_wpsh_script]...[/cmls_wpsh_script]` - Alias for `[cmls_wpsh_tag tag="script"]`

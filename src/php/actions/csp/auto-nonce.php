@@ -67,8 +67,14 @@ class AutoNonce extends AbstractActor {
 				);
 			}
 
-			// Create shortcode for nonce
-			\add_shortcode( 'cmls_wpsh_nonce', array( $this, 'generateNonce' ) );
+			// Create shortcodes for nonce
+			\add_shortcode( "{$prefix}_nonce", array( $this, 'generateNonce' ) );
+			\add_shortcode( "{$prefix}_script", function ( $attrs, $content, $tag ) {
+				$attrs['tag'] = 'script';
+
+				return $this->doTagShortcode( $attrs, $content, $tag );
+			} );
+			\add_shortcode( "{$prefix}_tag", array( $this, 'doTagShortcode' ) );
 
 			// Should we buffer and parse an entire request?
 			if ( (bool) $this->settings->getSetting( 'use_buffer' ) ) {
@@ -149,6 +155,31 @@ class AutoNonce extends AbstractActor {
 		}
 
 		return $this->nonce;
+	}
+
+	public function doTagShortcode( $attrs, $content, $tag ) {
+		if ( ! \array_key_exists( 'tag', $attrs ) ) {
+			return "{$tag} shortcode requires a 'tag' attribute.";
+		}
+		$tag = $attrs['tag'];
+		unset( $attrs['tag'] );
+		$opener = "<{$tag} nonce='{$this->generateNonce()}'";
+		if ( \count( $attrs ) ) {
+			$attributes = array();
+			foreach ( $attrs as $name => $attr ) {
+				$attributes[] = "{$name}='" . \esc_attr( $attr ) . "'";
+			}
+			$attr_string = \implode( ' ', $attributes );
+			$opener .= " {$attr_string}";
+		}
+		$opener .= '>';
+
+		// allow only an opening tag
+		if ( empty( $content ) ) {
+			return "{$opener}";
+		}
+
+		return "{$opener}{$content}</{$tag}>";
 	}
 
 	/**
