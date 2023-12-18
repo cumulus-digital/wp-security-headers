@@ -16,7 +16,7 @@
   "devDependencies": {
     "@prettier/plugin-php": "^0.19.6",
     "@vueform/multiselect": "^2.6.2",
-    "@wordpress/scripts": "^26.16.0",
+    "@wordpress/scripts": "^26.19.0",
     "gridjs": "^6.0.6",
     "preact": "^10.17.1",
     "preact-custom-element": "^4.2.1",

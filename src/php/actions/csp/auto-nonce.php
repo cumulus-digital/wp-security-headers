@@ -67,6 +67,9 @@ class AutoNonce extends AbstractActor {
 				);
 			}
 
+			// Create shortcode for nonce
+			\add_shortcode( 'cmls_wpsh_nonce', array( $this, 'generateNonce' ) );
+
 			// Should we buffer and parse an entire request?
 			if ( (bool) $this->settings->getSetting( 'use_buffer' ) ) {
 				\add_action( 'plugins_loaded', array( $this, 'startBuffer' ), \PHP_INT_MIN );
@@ -217,7 +220,7 @@ class AutoNonce extends AbstractActor {
 		// Now we need to ensure that the policies of the discovered
 		// directive don't contain anything that would negate a nonce
 		$bad_policies = $this->getBadPolicies( $headerDirective );
-		if ( $bad_policies && \count( $bad_policies )  ) {
+		if ( $bad_policies && \count( $bad_policies ) ) {
 			debug( "Skipping nonce for {$headerDirective} due to negating policies." );
 
 			return $policies;

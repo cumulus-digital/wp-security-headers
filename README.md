@@ -17,3 +17,14 @@ By default, a few methods are called on Actors if they exist.
 - sendHeaders: Called on the send_headers hook.
 
 Actors are otherwise free to register their own actions on any WP hook.
+
+## Auto-Noncing
+
+When CSP and auto-noncing is active, filters and a nonce shortcode become available.
+
+### Filter
+* `cmls_wpsh_filter_scripts` - Filters a given HTML fragment, applying nonces where appropriate.
+
+### Shortcode
+
+If auto-noncing is enabled and in code which processes output for shortcodes, the nonce for the current request can be added using `[cmls_wpsh_noce]`.

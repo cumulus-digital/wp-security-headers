@@ -2,7 +2,7 @@
 /**
  * @license proprietary?
  *
- * Modified by Daniel Vena on 02-November-2023 using Strauss.
+ * Modified by Daniel Vena on 18-December-2023 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 /**

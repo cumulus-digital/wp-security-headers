@@ -70,11 +70,12 @@ class AutoNonce extends AbstractSettingsHandler {
 
 				<blockquote class="callout">
 					<p>
-						Using this feature along with front-end caching may be broken orinsecure. If you are
-						using caching, it is better to
+						<strong>Using this feature along with front-end caching may be broken or insecure.</strong>
+						If you are using caching, it is better to
 						<a href="https://content-security-policy.com/hash/" target="_blank" rel="noopener">
 							generate hashes for included resources
 						</a>
+						which require them and cannot be allowed by domain rules,
 						and apply them to <a href="#csp_policies">directive policies</a> manually.
 					</p>
 				</blockquote>
