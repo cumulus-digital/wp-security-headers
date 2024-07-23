@@ -6,6 +6,8 @@ use CUMULUS\Wordpress\SecurityHeaders\Actions\AbstractActor;
 use const CUMULUS\Wordpress\SecurityHeaders\BASEDIR;
 use function CUMULUS\Wordpress\SecurityHeaders\debug;
 use CUMULUS\Wordpress\SecurityHeaders\Installer;
+use function CUMULUS\Wordpress\SecurityHeaders\ns;
+use const CUMULUS\Wordpress\SecurityHeaders\PLUGIN;
 use const CUMULUS\Wordpress\SecurityHeaders\PREFIX;
 use CUMULUS\Wordpress\SecurityHeaders\Settings\SettingsRegister;
 use WP_Error;
@@ -23,9 +25,15 @@ class Reporting extends AbstractActor {
 	 */
 	private $ajax_action = 'wpshr';
 
+	/**
+	 * Name of the WP Cron event for report flushing.
+	 */
+	private static $cron_name = 'wpshr-cron-flush-reports';
+
 	public function __construct() {
 		$this->settings = SettingsRegister::getHandler( 'csp/reporting' );
 		$this->setupReportHandler();
+		$this->setupCron();
 	}
 
 	public function sendHeaders() {
@@ -97,6 +105,46 @@ class Reporting extends AbstractActor {
 			}
 			\add_filter( "{$prefix}_csp_final", array( $this, 'addReportToPolicy' ) );
 		}
+	}
+
+	public function setupCron() {
+		$is_scheduled = \wp_next_scheduled( self::$cron_name );
+		if ( $this->isActive() && ! $is_scheduled ) {
+			\wp_schedule_event( \time(), 'hourly', self::$cron_name );
+		} elseif ( ! $this->isActive() && $is_scheduled ) {
+			self::removeCron();
+		}
+
+		\add_action( self::$cron_name, array( $this, 'handleCron' ) );
+		\register_deactivation_hook( PLUGIN, ns( 'Reporting::removeCron' ) );
+		\register_uninstall_hook( PLUGIN, ns( 'Reporting::removeCron' ) );
+	}
+
+	public static function removeCron() {
+		$is_scheduled = \wp_next_scheduled( self::$cron_name );
+		if ( $is_scheduled ) {
+			\wp_unschedule_event( $is_scheduled, 'hourly', self::$cron_name );
+		}
+	}
+
+	/**
+	 * Handle cron event to flush reports.
+	 */
+	public function handleCron() {
+		if ( ! $this->isActive() ) {
+			return;
+		}
+
+		$retain = \intval( $this->settings->getSetting( 'retain_days' ) );
+		if ( ! $retain || ! \in_array( $retain, array( 30, 60, 90, 120 ) ) ) {
+			return;
+		}
+
+		global $wpdb;
+		$table = $wpdb->prefix . PREFIX . Installer::$table_name;
+		$time  = \date( 'Y-m-d H:i:s', \strtotime( "-{$retain} days" ) );
+		$sql   = $wpdb->prepare( "DELETE FROM {$table} WHERE created_at < %s", $time );
+		$wpdb->query( $sql );
 	}
 
 	public function ingestReport() {

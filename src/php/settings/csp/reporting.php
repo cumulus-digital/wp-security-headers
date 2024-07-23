@@ -17,6 +17,8 @@ class Reporting extends AbstractSettingsHandler {
 
 	private $ajax_action = 'wpshr';
 
+	private static $cron_name = 'wpshr-cron-reporting-flush';
+
 	private $report_url = '';
 
 	public function __construct() {
