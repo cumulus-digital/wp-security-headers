@@ -88,13 +88,13 @@ span.desc > div {
 	}
 
 	> tbody > tr:nth-of-type(odd) {
-		&:not(:first-of-type) {
-			border-top: 1px solid #ccc;
-		}
-
 		display: flex;
 		justify-content: space-between;
 		gap: 1.5em;
+
+		&:not(:first-of-type) {
+			border-top: 1px solid #ccc;
+		}
 
 		@media (min-width: 800px) {
 			display: table-row;
