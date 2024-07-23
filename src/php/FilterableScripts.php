@@ -31,17 +31,24 @@ class FilterableScripts extends WP_Scripts {
 			$this->type_attr = " type='text/javascript'";
 		}
 
-		/*
-		 * Copy the contents of existing $wp_scripts into the new one.
-		 * This is needed for numerous plug-ins that do not play nice.
-		 *
-		 * https://wordpress.stackexchange.com/a/284495/198117
-		 */
-		if ( $GLOBALS['wp_scripts'] instanceof WP_Scripts ) {
+		$this->register_existing_scripts();
+		\add_action( 'wp_loaded', array( $this, 'register_existing_scripts' ) );
+	}
+
+	/*
+	 * Copy the contents of existing $wp_scripts into the new one.
+	 * This is needed for numerous plug-ins that do not play nice.
+	 *
+	 * https://wordpress.stackexchange.com/a/284495/198117
+	 */
+	public function register_existing_scripts() {
+		if ( isset( $GLOBALS['wp_scripts'] ) && $GLOBALS['wp_scripts'] instanceof WP_Scripts ) {
 			$missing_scripts = \array_diff_key( $GLOBALS['wp_scripts']->registered, $this->registered );
 
 			foreach ( $missing_scripts as $mscript ) {
-				$this->registered[ $mscript->handle ] = $mscript;
+				if ( ! isset( $this->registered[$mscript->handle] ) ) {
+					$this->registered[ $mscript->handle ] = $mscript;
+				}
 			}
 		}
 	}
