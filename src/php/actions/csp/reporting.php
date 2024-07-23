@@ -10,6 +10,7 @@ use function CUMULUS\Wordpress\SecurityHeaders\ns;
 use const CUMULUS\Wordpress\SecurityHeaders\PLUGIN;
 use const CUMULUS\Wordpress\SecurityHeaders\PREFIX;
 use CUMULUS\Wordpress\SecurityHeaders\Settings\SettingsRegister;
+use Exception;
 use WP_Error;
 
 \defined( 'ABSPATH' ) || exit( 'No direct access allowed.' );
@@ -135,16 +136,20 @@ class Reporting extends AbstractActor {
 			return;
 		}
 
-		$retain = \intval( $this->settings->getSetting( 'retain_days' ) );
-		if ( ! $retain || ! \in_array( $retain, array( 30, 60, 90, 120 ) ) ) {
-			return;
-		}
+		try {
+			$retain = \intval( $this->settings->getSetting( 'retain_days' ) );
+			if ( ! $retain || ! \in_array( $retain, array( 30, 60, 90, 120 ) ) ) {
+				return;
+			}
 
-		global $wpdb;
-		$table = $wpdb->prefix . PREFIX . Installer::$table_name;
-		$time  = \date( 'Y-m-d H:i:s', \strtotime( "-{$retain} days" ) );
-		$sql   = $wpdb->prepare( "DELETE FROM {$table} WHERE created_at < %s", $time );
-		$wpdb->query( $sql );
+			global $wpdb;
+			$table = $wpdb->prefix . PREFIX . Installer::$table_name;
+			$time  = \date( 'Y-m-d H:i:s', \strtotime( "-{$retain} days" ) );
+			$sql   = $wpdb->prepare( "DELETE FROM {$table} WHERE created_at < %s", $time );
+			$wpdb->query( $sql );
+		} catch ( Exception $e ) {
+			// Do nothing
+		}
 	}
 
 	public function ingestReport() {
