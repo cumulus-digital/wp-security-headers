@@ -69,7 +69,6 @@ class Reporting extends AbstractSettingsHandler {
 						'type'     => 'toggle',
 						'default'  => $this->getDefault( 'built_in' ),
 					),
-					// @TODO implement this!
 					array(
 						'id'       => 'retain_days',
 						'title'    => 'Keep reports',
