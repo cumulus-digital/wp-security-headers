@@ -76,6 +76,7 @@ class Reporting extends AbstractSettingsHandler {
 						'subtitle' => 'Stale reports will be flushed periodically.',
 						'type'     => 'select',
 						'choices'  => array(
+							15  => '15 Days',
 							30  => '30 Days',
 							60  => '60 Days',
 							90  => '90 Days',

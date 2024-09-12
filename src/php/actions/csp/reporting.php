@@ -138,7 +138,7 @@ class Reporting extends AbstractActor {
 
 		try {
 			$retain = \intval( $this->settings->getSetting( 'retain_days' ) );
-			if ( ! $retain || ! \in_array( $retain, array( 30, 60, 90, 120 ) ) ) {
+			if ( ! $retain || ! \in_array( $retain, array( 15, 30, 60, 90, 120 ) ) ) {
 				return;
 			}
 
