@@ -40,6 +40,24 @@ class SettingsRegister {
 
 			// Will handle validation of settings in each Handler
 			\add_filter( PREFIX . '_settings_validate', __CLASS__ . '::validateSettings' );
+
+			// Allow ordering of tabs
+			\add_filter( 'wpsf_register_settings_' . PREFIX, function ( $WPSF ) {
+				if ( ! empty( $WPSF['tabs'] ) ) {
+					\usort( $WPSF['tabs'], function ( $a, $b ) {
+						if ( ! isset( $a['tab_order'] ) ) {
+							$a['tab_order'] = 0;
+						}
+						if ( ! isset( $b['tab_order'] ) ) {
+							$b['tab_order'] = 0;
+						}
+
+						return ( $a['tab_order'] > $b['tab_order'] ) ? 1 : 0;
+					} );
+				}
+
+				return $WPSF;
+			} );
 		}
 
 		return self::$wpsf;

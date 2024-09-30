@@ -47,7 +47,7 @@ class Framework extends CWSH_WordpressSettingsFramework {
 			value="<?php echo $args['value']; ?>"
 			placeholder="<?php echo \esc_attr( $args['placeholder'] ); ?>"
 			class="regular-text <?php echo \esc_attr( $args['class'] ); ?>"
-			<?php if ( is_array($args) && \array_key_exists( 'attributes', $args ) ): ?>
+			<?php if ( \is_array( $args ) && \array_key_exists( 'attributes', $args ) ): ?>
 				<?php foreach( $args['attributes'] as $attr => $aval ): ?>
 					<?php echo \esc_html( $attr ); ?>="<?php echo \esc_attr( $aval ); ?>"
 				<?php endforeach; ?>
@@ -55,7 +55,7 @@ class Framework extends CWSH_WordpressSettingsFramework {
 		>
 		<?php
 
-		$this->generate_description( $args['desc'] );
+		$this->generate_description( $args );
 	}
 
 	/**
@@ -96,7 +96,7 @@ class Framework extends CWSH_WordpressSettingsFramework {
 
 		echo '</ul>';
 
-		$this->generate_description( $args['desc'] );
+		$this->generate_description( $args );
 	}
 
 	/**
@@ -158,7 +158,7 @@ class Framework extends CWSH_WordpressSettingsFramework {
 		</script>
 		<?php
 
-		$this->generate_description( $args['desc'] );
+		$this->generate_description( $args );
 	}
 
 	/**
@@ -184,7 +184,9 @@ class Framework extends CWSH_WordpressSettingsFramework {
 				>
 				<span class="slider"></span>
 			</label>
-			<span class="desc"><?php echo \wp_kses_post( $args['desc'] ); ?></span>
+			<?php if ( isset( $args['desc'] ) ): ?>
+				<span class="desc"><?php echo \wp_kses_post( $args['desc'] ); ?></span>
+			<?php endif; ?>
 		<?php
 	}
 
