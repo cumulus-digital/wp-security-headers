@@ -25,7 +25,7 @@ class AutoNonce extends AbstractActor {
 	 */
 	protected $directivesHandler;
 
-	private $nonce;
+	private $nonce_key = PREFIX . '_csp_auto_nonce';
 
 	public function __construct() {
 		$this->settings          = SettingsRegister::getHandler( 'csp/auto_nonce' );
@@ -38,9 +38,10 @@ class AutoNonce extends AbstractActor {
 			debug( 'Auto-Nonce is ACTIVE' );
 
 			// When auto-nonce is active, we need to ensure HTML is not cached.
-			\header( 'Cache-Control: max-age=0, no-cache, no-store, must-revalidate' );
-			\header( 'Pragme: no-cache' );
-			\header( 'Expires: Wed, 11 Jan 1984 05:00:00 GMT' );
+			// NOT NECESSARILY NEEDED
+			// \header( 'Cache-Control: max-age=0, no-cache, no-store, must-revalidate' );
+			// \header( 'Pragme: no-cache' );
+			// \header( 'Expires: Wed, 11 Jan 1984 05:00:00 GMT' );
 		}
 	}
 
@@ -150,11 +151,11 @@ class AutoNonce extends AbstractActor {
 	}
 
 	public function generateNonce() {
-		if ( ! $this->nonce ?? false ) {
-			$this->nonce = \base64_encode( \random_bytes( 18 ) );
+		if ( ! isset( $GLOBALS[$this->nonce_key] ) ?? false ) {
+			$GLOBALS[$this->nonce_key] = \base64_encode( \random_bytes( 18 ) );
 		}
 
-		return $this->nonce;
+		return $GLOBALS[$this->nonce_key];
 	}
 
 	public function doTagShortcode( $attrs, $content, $tag ) {
@@ -450,7 +451,8 @@ class AutoNonce extends AbstractActor {
 				if ( \count( $links ) ) {
 					foreach ( $links as $link ) {
 						if (
-							$link->hasAttribute( 'rel' )
+							\is_a( $link, 'DOMElement' )
+							&& $link->hasAttribute( 'rel' )
 							&& 'stylesheet' === \mb_strtolower( $link->getAttribute( 'rel' ) )
 							&& $this->nodeCanBeNonced( $link )
 						) {
@@ -462,7 +464,9 @@ class AutoNonce extends AbstractActor {
 		}
 
 		foreach ( $affected as $tag ) {
-			$tag->setAttribute( 'nonce', $this->generateNonce() );
+			if ( \is_a( $tag, 'DOMElement' ) ) {
+				$tag->setAttribute( 'nonce', $this->generateNonce() );
+			}
 		}
 
 		return $doc->saveHTML();
