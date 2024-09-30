@@ -10,7 +10,7 @@ namespace CUMULUS\Wordpress\SecurityHeaders;
  * Description: Control several security-related HTTP features including a rudamentary CSP manager with auto-nonce capability.
  * Author: vena
  * License: UNLICENSED
- * Version: 1.1.0
+ * Version: 1.2.0
  */
 
 \defined( 'ABSPATH' ) || exit( 'No direct access allowed.' );

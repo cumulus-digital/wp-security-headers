@@ -25,11 +25,11 @@
         {
             "type": "package",
             "package": {
-                "name": "jamesckemp/wordpress-settings-framework",
+                "name": "iconicwp/wordpress-settings-framework",
                 "version": "master",
                 "type": "library",
                 "source": {
-                    "url": "https://github.com/jamesckemp/Wordpress-Settings-Framework.git",
+                    "url": "https://github.com/iconicwp/Wordpress-Settings-Framework.git",
                     "type": "git",
                     "reference": "master"
                 }
@@ -42,7 +42,7 @@
         "friendsofphp/php-cs-fixer": "^3.18"
     },
     "require": {
-        "jamesckemp/wordpress-settings-framework": "dev-master"
+        "iconicwp/wordpress-settings-framework": "dev-master"
     },
     "scripts": {
         "strauss": [
@@ -67,7 +67,7 @@
                 ]
             },
             "override_autoload": {
-                "jamesckemp/wordpress-settings-framework": {
+                "iconicwp/wordpress-settings-framework": {
                     "files": [
                         "wp-settings-framework.php",
                         "assets"
