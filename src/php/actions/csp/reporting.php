@@ -200,12 +200,23 @@ class Reporting extends AbstractActor {
 		}
 
 		\trigger_error( 'Error logging CSP report!', \E_USER_WARNING );
-		\trigger_error( $wpdb->last_error, \E_USER_WARNING );
+		\trigger_error(
+			\htmlspecialchars(
+				$wpdb->last_error,
+				\ENT_QUOTES,
+				'UTF-8'
+			),
+			\E_USER_WARNING
+		);
 
 		return \wp_send_json_error( array( 'error' => 'Failed to log report.' ), 500 );
 	}
 
 	public function validateReport( $report ) {
+		if ( ! \is_array( $report ) ) {
+			return new WP_Error( '403', 'Received a malformed report.' );
+		}
+
 		// Check for required keys
 		$required_keys = array(
 			'document-uri',
@@ -215,23 +226,38 @@ class Reporting extends AbstractActor {
 		);
 		foreach ( $required_keys as $key ) {
 			if ( ! \is_array( $report ) || ! \array_key_exists( $key, $report ) ) {
-				return new WP_Error( '403', 'Received a malformed report.' );
+				return new WP_Error( '403', 'Report is missing required keys.' );
 			}
 		}
 
 		// Check for browser-specific URL schemes
 		foreach ( array( 'document-uri', 'source-file', 'blocked-uri' ) as $key ) {
-			if ( \is_array( $report ) && \array_key_exists( $key, $report ) && 'inline' !== $report[$key] ) {
+			if (
+				\array_key_exists( $key, $report )
+				&& ! \in_array( $report[$key], array( 'inline', 'about', 'data' ) )
+			) {
 				$scheme = \parse_url( $report[$key], \PHP_URL_SCHEME );
-				if ( ! $scheme ) {
-					\trigger_error( 'Failed parsing URL scheme!', \E_USER_WARNING );
-					\trigger_error( \print_r( $scheme, true ), \E_USER_WARNING );
-
-					return new WP_Error( '200', 'Failed to parse URL scheme, ignored.' );
+				if ( $scheme ) {
+					$scheme = \mb_strtolower( $scheme );
 				}
-				if ( ! \in_array( \mb_strtolower( $scheme ), array( 'http', 'https' ) ) ) {
-					\trigger_error( 'invalid scheme!', \E_USER_WARNING );
-					\trigger_error( \print_r( $scheme, true ), \E_USER_WARNING );
+				if ( ! $scheme || ! \in_array( $scheme, array( 'http', 'https' ) ) ) {
+					// Ignore non-browser URL schemes
+					\trigger_error(
+						\htmlspecialchars(
+							'Invalid URL scheme ' . $scheme . 'in ' . $key . ' of CSP report',
+							\ENT_QUOTES,
+							'UTF-8'
+						),
+						\E_USER_WARNING
+					);
+					\trigger_error(
+						\htmlspecialchars(
+							\print_r( $report, true ),
+							\ENT_QUOTES,
+							'UTF-8'
+						),
+						\E_USER_WARNING
+					);
 
 					return new WP_Error( '200', 'Ignored due to non-browser URL scheme.' );
 				}
@@ -239,10 +265,13 @@ class Reporting extends AbstractActor {
 		}
 
 		// Check that document host matches our allowed hosts
-		$document_host = \mb_strtolower( \parse_url( $report['document-uri'], \PHP_URL_HOST ) );
-		$site_host     = \mb_strtolower( \parse_url( \get_site_url(), \PHP_URL_HOST ) );
-		if ( $document_host !== $site_host ) {
-			return new WP_Error( '403', 'Incorrect document-uri hostname.' );
+		$document_host = \parse_url( $report['document-uri'], \PHP_URL_HOST );
+		if ( $document_host ) {
+			$document_host = \mb_strtolower( $document_host );
+		}
+		$site_host = \mb_strtolower( \parse_url( \get_site_url(), \PHP_URL_HOST ) );
+		if ( $document_host && $document_host !== $site_host ) {
+			return new WP_Error( '403', 'Incorrect document-uri hostname in report.' );
 		}
 
 		// CSP-WTF filters
@@ -261,6 +290,16 @@ class Reporting extends AbstractActor {
 			}
 		}
 		if ( true !== $report_issue ) {
+			\trigger_error( 'Invalid CSP report', \E_USER_WARNING );
+			\trigger_error(
+				\htmlspecialchars(
+					\print_r( $report, true ),
+					\ENT_QUOTES,
+					'UTF-8'
+				),
+				\E_USER_WARNING
+			);
+
 			return new WP_Error( '403', 'Invalid report.' );
 		}
 
