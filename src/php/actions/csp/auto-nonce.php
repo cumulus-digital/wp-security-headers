@@ -397,7 +397,7 @@ class AutoNonce extends AbstractActor {
 				|| $this->directivesHandler->isDirectiveEnabled( 'default-src' )
 			)
 		) {
-			if ( \mb_stristr( $html, '<script' ) ) {
+			if ( false !== \mb_stripos( $html, '<script' ) ) {
 				$scripts = $doc->getElementsByTagName( 'script' );
 
 				if ( \count( $scripts ) ) {
@@ -431,7 +431,7 @@ class AutoNonce extends AbstractActor {
 					)
 				)
 			) {
-				if ( \mb_stristr( $html, '<style' ) ) {
+				if ( false !== \mb_stripos( $html, '<style' ) ) {
 					$styles = $doc->getElementsByTagName( 'style' );
 
 					if ( \count( $styles ) ) {
@@ -445,7 +445,7 @@ class AutoNonce extends AbstractActor {
 			}
 
 			// Handle linked stylesheets
-			if ( \mb_stristr( $html, '<link' ) ) {
+			if ( false !== \mb_stripos( $html, '<link' ) ) {
 				$links = $doc->getElementsByTagName( 'link' );
 
 				if ( \count( $links ) ) {
@@ -608,10 +608,11 @@ class AutoNonce extends AbstractActor {
 					&& ! $directivesHandler->policyContains( $effective_directive, "'unsafe-inline'" )
 				) {
 					if ( $el->hasAttribute( 'type' ) ) {
-						// If their type is not executable, they don't need a nonce
-						$type = \mb_strtolower( $el->getAttribute( 'type' ) );
+						// If their type is not executable (or could become executable,
+						// e.g. through), they don't need a nonce
+						$type = $el->getAttribute( 'type' );
 
-						if ( ! \preg_match( '/javascript|ecmascript|jstrict|livescript/', $type ) ) {
+						if ( ! \preg_match( '/javascript|ecmascript|jstrict|livescript|text\/plain/i', $type ) ) {
 							return false;
 						}
 					}
