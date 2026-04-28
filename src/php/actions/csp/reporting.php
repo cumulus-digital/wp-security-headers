@@ -298,16 +298,25 @@ class Reporting extends AbstractActor {
 		// CSP-WTF filters
 		$filters = include BASEDIR . '/src/php/csp-wtf-filters.php';
 
-		$report_issue = true;
-		foreach ( $filters as $filter_check => $options ) {
-			$filter_on = $report[$options['filter_on']] ?? false;
-			if ( ! $filter_on || ( \is_array( $report ) && ! \array_key_exists( $filter_on, $report ) ) ) {
-				continue;
-			}
-			if ( false !== \mb_strpos( $report[$filter_on], $filter_check ) ) {
-				$report_issue = false;
+		$report_issue  = true;
+		$report_values = \array_intersect_key( $report, \array_flip( array(
+			'blocked-uri',
+			'document-uri',
+			'original-policy',
+			'referrer',
+			'script-sample',
+			'source-file',
+		) ) );
 
-				break;
+		if ( ! empty( $report_values ) ) {
+			foreach ( $filters as $filter_check => $options ) {
+				$filter_on = $options['filter_on'];
+
+				if ( isset( $report_values[$filter_on] ) && false !== \mb_strpos( $report_values[$filter_on], $filter_check ) ) {
+					$report_issue = false;
+
+					break;
+				}
 			}
 		}
 		if ( true !== $report_issue ) {
