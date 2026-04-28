@@ -183,9 +183,13 @@ export default defineComponent({
 		watch(serverOptions, loadFromServer, { deep: true });
 
 		const matchThisOrigin = (url, origin = window.location.href) => {
-			const u = new URL(url);
-			const o = new URL(origin);
-			return u.origin === o.origin;
+			try {
+				const u = new URL(url);
+				const o = new URL(origin);
+				return u.origin === o.origin;
+			} catch (error) {
+				return false;
+			}
 		};
 
 		const uaDecoder = (ua) => {
