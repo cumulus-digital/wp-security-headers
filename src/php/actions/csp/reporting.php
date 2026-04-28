@@ -168,8 +168,6 @@ class Reporting extends AbstractActor {
 		}
 		$data = $data['csp-report'];
 
-		$data['user-agent'] = $_SERVER['HTTP_USER_AGENT'];
-
 		$clean_data = $this->validateReport( $data );
 		if ( \is_wp_error( $clean_data ) ) {
 			return \wp_send_json_error( $clean_data->get_error_message(), $clean_data->get_error_code() );
@@ -277,18 +275,19 @@ class Reporting extends AbstractActor {
 		}
 
 		// Ignored User Agents
+		$user_agent = $_SERVER['HTTP_USER_AGENT'];
 		$ignored_uas = trim( $this->getSetting( 'ignore_ua' ) );
 		if ( ! empty( $ignored_uas ) ) {
 			$ignored_uas = explode( "\n", $ignored_uas );
 			foreach ( $ignored_uas as $ignored_ua ) {
 				if ( strpos( $ignored_ua, '/' ) === 0 ) {
 					// UA line is a regular expression
-					if ( preg_match( $ignored_ua, $report['user-agent'] ) ) {
+					if ( preg_match( $ignored_ua, $user_agent ) ) {
 						return new WP_Error( '200', 'Ignored.' );
 					}
 				} else {
 					// UA line is a string
-					if ( $ignored_ua === $report['user-agent'] ) {
+					if ( $ignored_ua === $user_agent ) {
 						return new WP_Error( '200', 'Ignored.' );
 					}
 				}
