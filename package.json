@@ -22,7 +22,7 @@
     "preact-custom-element": "^4.6.0",
     "string-replace-loader": "^3.3.0",
     "style-to-object": "^1.0.14",
-    "vue": "^3.5.32",
+    "vue": "^3.5.33",
     "vue-loader": "^17.4.2",
     "vue3-easy-data-table": "^1.5.47"
   },
