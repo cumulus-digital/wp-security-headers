@@ -1,0 +1,4 @@
+Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko; compatible; BuiltWith/1.0; +http://builtwith.com/biup) Chrome/60.0.3112.50 Safari/537.36
+Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/61.0.3163.59 Safari/537.36 Prerender (+https://github.com/prerender/prerender)
+Mozilla/5.0 (compatible; woorankreview/2.0; +https://www.woorank.com/)
+Mozilla/5.0 (compatible; AhrefsBot/6.1; +http://ahrefs.com/robot/)

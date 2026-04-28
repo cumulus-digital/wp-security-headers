@@ -1,5 +1,6 @@
 src/php/settings_old
 .php-cs-fixer/**/*.csv
+.agent
 
 # Composer
 vendor/

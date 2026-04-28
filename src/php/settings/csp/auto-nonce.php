@@ -80,7 +80,7 @@ class AutoNonce extends AbstractSettingsHandler {
 					</p>
 				</blockquote>
 				<p>
-					A nonce will <strong>not</strong> be set for directives if its effective policy contains <nobr>\'unsafe-inline\'</nobr> or \'none\'
+					A nonce will <strong>not</strong> be set for directives if its effective policy contains \'none\'
 					with the exception of <nobr>script-src</nobr> if the effective policy contains <nobr>\'strict-dynamic\'</nobr>
 				</p>
 				<blockquote class="callout">
@@ -97,8 +97,8 @@ class AutoNonce extends AbstractSettingsHandler {
 					\'default-src\'.
 				</p>
 				<p>
-					Only script, style, and link tags may be nonced. Tags which use style or event (e.g. "onclick")
-					attributes cannot be nonced.
+					Only script, style, and link tags may be nonced. Tags using attributes such as style or events (e.g. "onclick")
+					cannot be nonced.
 				</p>
 				',
 			'fields' => array(
@@ -199,6 +199,28 @@ class AutoNonce extends AbstractSettingsHandler {
 						),
 					),
 				),
+				array(
+					'id' => 'support_older_browsers',
+					'title' => 'Include "unsafe" rules for older browsers',
+					'type' => 'toggle',
+					'default' => $this->getDefault( 'support_older_browsers' ),
+					'desc' => '
+						<div>
+							<p>
+								Modern browsers will ignore these rules when a nonce is present.
+								This allows older browsers which do not support the <code>nonce</code>
+								attribute to allow inline scripts and styles, but may be considered
+								unsafe.
+							</p>
+						</div>
+					',
+					'show_if' => array(
+						array(
+							'field' => "{$this->getSectionId()}_enabled",
+							'value' => array( 'enabled', 'admin' ),
+						),
+					),
+				)
 			),
 		);
 

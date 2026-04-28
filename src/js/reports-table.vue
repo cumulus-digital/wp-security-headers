@@ -1,7 +1,9 @@
 <template>
-	<link rel="stylesheet" v-for="style in shadowStyles" v-bind:href="style">
+	<link rel="stylesheet" v-for="style in shadowStyles" v-bind:href="style" />
 	<div class="functions">
-		<button v-on:click="loadFromServer" class="refresh">&#8635; Refresh</button>
+		<button v-on:click="loadFromServer" class="refresh">
+			&#8635; Refresh
+		</button>
 		<div>
 			Filter Directives:
 			<Multiselect
@@ -21,30 +23,52 @@
 		:headers="headers"
 		:items="items"
 		buttons-pagination
-		:rows-items=[15,25,50]
+		:rows-items="[15, 25, 50]"
 		alternating
 		must-sort
 	>
+		<template #item-document_uri="item">
+			<a
+				v-if="matchThisOrigin(item.document_uri)"
+				:href="encodeURI(item.document_uri)"
+				target="_blank"
+				rel="noopener"
+			>
+				{{ item.document_uri }}
+			</a>
+			<span v-else>{{ item.document_uri }}</span>
+		</template>
 		<template #expand="item">
 			<div class="uagent">
-				<strong>User Agent:</strong> {{ item.user_agent }}
+				<strong>User Agent:</strong>
+				{{ item.user_agent }}
+				<a
+					:href="uaDecoder(item.user_agent)"
+					target="_blank"
+					rel="noopener"
+				>
+					(decode)
+				</a>
 			</div>
 			<div class="raw-report">
 				<pre>{{ item.full_report }}</pre>
 			</div>
 		</template>
 		<template #empty-message>
-			{{errorMessage}}
+			{{ errorMessage }}
 		</template>
-
 	</EasyDataTable>
 	<div class="functions secondary">
-		<button v-on:click="loadFromServer" class="refresh">&#8635; Refresh</button>
-		<button v-on:click="flushServer" class="flush-reports">&#x1f5d1; Flush Reports</button>
+		<button v-on:click="loadFromServer" class="refresh">
+			&#8635; Refresh
+		</button>
+		<button v-on:click="flushServer" class="flush-reports">
+			&#x1f5d1; Flush Reports
+		</button>
 	</div>
 </template>
 <script>
-import { defineComponent, ref, computed, watch, onBeforeUnmount } from "vue";
+import { defineComponent, ref, computed, watch, onBeforeUnmount } from 'vue';
 import Multiselect from '@vueform/multiselect';
 import { throttle } from 'lodash-es';
 
@@ -56,8 +80,8 @@ export default defineComponent({
 			{ text: 'Directive', value: 'violated_directive', sortable: true },
 			{ text: 'Document', value: 'document_uri', sortable: true },
 			{ text: 'Status', value: 'status_code', sortable: true },
-			{ text: 'Blocked URI', value: 'blocked_uri' },
-			{ text: 'Source File', value: 'source_file' },
+			{ text: 'Blocked URI', value: 'blocked_uri', sortable: true },
+			{ text: 'Source File', value: 'source_file', sortable: true },
 			{ text: 'Line', value: 'line_number' },
 		]);
 		const items = ref([]);
@@ -77,7 +101,7 @@ export default defineComponent({
 			'manifest-src': 'manifest-src',
 			'media-src': 'media-src',
 			'object-src': 'object-src',
-			'sandbox': 'sandbox',
+			sandbox: 'sandbox',
 			'script-src': 'script-src*',
 			'style-src': 'style-src*',
 			'worker-src': 'worker-src',
@@ -99,7 +123,7 @@ export default defineComponent({
 				pp: rowsPerPage,
 				s: sortBy,
 				o: sortType,
-				d: effectiveDirective.value.join(',')
+				d: effectiveDirective.value.join(','),
 			});
 			return `${config.url}?${vars.toString()}`;
 		});
@@ -115,18 +139,15 @@ export default defineComponent({
 		const loading = ref(false);
 
 		const loadFromServer = async (e) => {
-			if(e?.preventDefault) e.preventDefault();
+			if (e?.preventDefault) e.preventDefault();
 			loading.value = true;
 			try {
-				const response = await fetch(
-					restApiUrl.value,
-					{
-						method: 'GET',
-						headers: new Headers({
-							'Accept': 'application/json'
-						})
-					}
-				);
+				const response = await fetch(restApiUrl.value, {
+					method: 'GET',
+					headers: new Headers({
+						Accept: 'application/json',
+					}),
+				});
 				const { success, data } = await response.json();
 				if (!response.ok) {
 					throw new Error(data.error);
@@ -151,36 +172,39 @@ export default defineComponent({
 		};
 		loadFromServer();
 
-		const throttleWatch = throttle(
-			loadFromServer,
-			1000,
-			{ leading: false, trailing: true }
-		);
-		watch(
-			effectiveDirective,
-			throttleWatch,
-			{ deep: true }
-		);
+		const throttleWatch = throttle(loadFromServer, 1000, {
+			leading: false,
+			trailing: true,
+		});
+		watch(effectiveDirective, throttleWatch, { deep: true });
 		onBeforeUnmount(() => {
 			throttleWatch.cancel();
 		});
-		watch(
-			serverOptions,
-			loadFromServer,
-			{ deep: true }
-		);
+		watch(serverOptions, loadFromServer, { deep: true });
+
+		const matchThisOrigin = (url, origin = window.location.href) => {
+			const u = new URL(url);
+			const o = new URL(origin);
+			return u.origin === o.origin;
+		};
+
+		const uaDecoder = (ua) => {
+			return `https://useragentstring.com/?uas=${encodeURIComponent(ua)}&getJSON=all`;
+		};
 
 		const flushServer = async () => {
 			if (confirm('This will delete all reports, are you sure?')) {
 				loading.value = true;
 				try {
 					const response = await fetch(
-						window.cmls_wpsh_ajax.url + '?action=' + window.cmls_wpsh_ajax.actions.flush,
+						window.cmls_wpsh_ajax.url +
+							'?action=' +
+							window.cmls_wpsh_ajax.actions.flush,
 						{
 							method: 'DELETE',
 							headers: new Headers({
-								'Accept': 'application/json'
-							})
+								Accept: 'application/json',
+							}),
 						}
 					);
 					await loadFromServer();
@@ -204,8 +228,10 @@ export default defineComponent({
 			statusMessage,
 			loading,
 			loadFromServer,
-			flushServer
+			flushServer,
+			matchThisOrigin,
+			uaDecoder,
 		};
-	}
+	},
 });
 </script>

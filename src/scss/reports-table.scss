@@ -23,6 +23,11 @@
 		margin-left: auto;
 		bottom: auto;
 	}
+	td.can-expand {
+		padding-left: 0.5em;
+		padding-right: 0.5em;
+		text-align: center !important;
+	}
 	td.expand {
 		background: #eaeaea;
 		border: 2px solid #fff;

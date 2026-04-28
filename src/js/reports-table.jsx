@@ -117,7 +117,13 @@ function initApp() {
 							</i>,
 							item.created_at,
 							item.violated_directive,
-							item.document_uri,
+							<a
+								href={item.document_uri}
+								target="_blank"
+								rel="noopener"
+							>
+								{item.document_uri}
+							</a>,
 							item.status_code,
 							item.blocked_uri,
 							item.source_file,

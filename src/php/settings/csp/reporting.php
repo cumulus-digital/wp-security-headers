@@ -31,6 +31,10 @@ class Reporting extends AbstractSettingsHandler {
 		$this->setDefault( 'retain_days', 30 );
 		$this->setDefault( 'remote_url', '' );
 
+		// Read defaults for ignore_ua from ignored-user-agents.txt
+		$ignored_uas = file_get_contents( \CUMULUS\Wordpress\SecurityHeaders\BASEDIR . 'src/php/ignored-user-agents.txt' );
+		$this->setDefault( 'ignore_ua', $ignored_uas );
+
 		$this->addSettingsSection();
 	}
 
@@ -108,6 +112,25 @@ class Reporting extends AbstractSettingsHandler {
 							),
 						),
 					),
+					array(
+						'id' => 'ignore_ua',
+						'title' => 'Ignored User Agents',
+						'subtitle' => '
+							Specify user agents to ignore in reports, one per line.
+							To use <a href="https://www.php.net/manual/en/reference.pcre.pattern.syntax.php" target="_blank">Regular expressions</a>,
+							begin a line with a <code>/</code>
+						',
+						'type' => 'textarea',
+						'class' => 'wide',
+						'attributes' => array( 'style' => 'white-space: nowrap; overflow-wrap: normal; overflow-x: scroll; resize: both;' ),
+						'default' => $this->getDefault( 'ignore_ua' ),
+						'show_if' => array(
+							array(
+								'field' => "{$this->getSectionId()}_built_in",
+								'value' => array( '1' ),
+							),
+						),
+					)
 				),
 			),
 		);

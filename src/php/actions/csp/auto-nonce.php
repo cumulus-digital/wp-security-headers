@@ -103,7 +103,7 @@ class AutoNonce extends AbstractActor {
 				\add_action(
 					'init',
 					function () {
-						if ( ! \array_key_exists( 'wp_cripts', $GLOBALS ) || ! $GLOBALS['wp_scripts'] instanceof FilterableScripts ) {
+						if ( ! \array_key_exists( 'wp_scripts', $GLOBALS ) || ! $GLOBALS['wp_scripts'] instanceof FilterableScripts ) {
 							debug( 'Setting up inline script filter' );
 							$GLOBALS['wp_scripts'] = new FilterableScripts();
 						}
@@ -192,7 +192,7 @@ class AutoNonce extends AbstractActor {
 	 * @return array|false
 	 */
 	public function getBadPolicies( $directive ) {
-		$bad_policies = array( "'none'", "'unsafe-inline'" );
+		$bad_policies = array( "'none'" );
 		$errors       = array();
 
 		// "bad" policies are fallbacks when 'strict-dynamic' is set on script-src or default-src
@@ -275,17 +275,28 @@ class AutoNonce extends AbstractActor {
 				"{$prefix}_csp_default-src",
 				function ( $policies, $directive ) use ( $nonce ) {
 					$policies[] = $nonce;
-
 					return $policies;
 				},
 				10,
 				2
 			);
-
-			return $policies;
+		} else {
+			array_unshift( $policies, $nonce );
+			$policies = $this->injectUnsafeRulesIfEnabled( $policies );
 		}
 
-		$policies[] = $nonce;
+		return $policies;
+	}
+
+	public function injectUnsafeRulesIfEnabled( $policies ) {
+		if ( (bool) $this->settings->getSetting( 'support_older_browsers' ) ) {
+			if ( ! \in_array( "'unsafe-inline'", $policies ) ) {
+				$policies[] = "'unsafe-inline'";
+			}
+			if ( ! \in_array( "'unsafe-eval'", $policies ) ) {
+				$policies[] = "'unsafe-eval'";
+			}
+		}
 
 		return $policies;
 	}
