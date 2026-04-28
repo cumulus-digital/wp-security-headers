@@ -280,6 +280,13 @@ class Reporting extends AbstractActor {
 		if ( ! empty( $ignored_uas ) ) {
 			$ignored_uas = explode( "\n", $ignored_uas );
 			foreach ( $ignored_uas as $ignored_ua ) {
+				$ignored_ua = trim( $ignored_ua );
+				if ( empty( $ignored_ua ) ) {
+					continue;
+				}
+				if ( strpos( $ignored_ua, '#' ) === 0 || strpos( $ignored_ua, '//' ) === 0 ) {
+					continue;
+				}
 				if ( strpos( $ignored_ua, '/' ) === 0 ) {
 					// UA line is a regular expression
 					if ( preg_match( $ignored_ua, $user_agent ) ) {

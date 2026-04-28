@@ -118,7 +118,8 @@ class Reporting extends AbstractSettingsHandler {
 						'subtitle' => '
 							Specify user agents to ignore in reports, one per line.
 							To use <a href="https://www.php.net/manual/en/reference.pcre.pattern.syntax.php" target="_blank">Regular expressions</a>,
-							begin a line with a <code>/</code>
+							begin a line with a <code>/</code>. Comments may be included by starting a line with
+							<code>#</code> or <code>//</code>.
 						',
 						'type' => 'textarea',
 						'class' => 'wide',
