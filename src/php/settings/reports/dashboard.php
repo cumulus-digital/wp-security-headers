@@ -196,8 +196,8 @@ class Dashboard extends AbstractSettingsHandler {
 			$where_clauses[] = 'violated_directive IN (' . \implode( ',', $sql_directives ) . ')';
 		}
 
-		$filter_status = $_GET['fs'] ?? false;
-		if ( filter_var( $filter_status, FILTER_VALIDATE_INT ) ) {
+		$filter_status = $_GET['fs'];
+		if ( false !== filter_var( $filter_status, FILTER_VALIDATE_INT ) ) {
 			$filter_status = \intval( $filter_status );
 			if ( $filter_status > -1 && $filter_status < 600 ) {
 				$where_clauses[] = "status_code != '" . \esc_sql( $filter_status ) . "'";
@@ -205,7 +205,7 @@ class Dashboard extends AbstractSettingsHandler {
 		}
 
 		if ( count($where_clauses) > 0 ) {
-			$where_clause = 'WHERE ' . \implode( ' AND ', $where_clause );
+			$where_clause = 'WHERE ' . \implode( ' AND ', $where_clauses );
 		}
 
 		global $wpdb;
