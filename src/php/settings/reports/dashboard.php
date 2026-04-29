@@ -172,8 +172,11 @@ class Dashboard extends AbstractSettingsHandler {
 		if ( $page && $page > 0 ) {
 			--$page;
 		}
+
+		$where_clause = '';
+		$where_clauses = array();
+
 		$directives   = $_GET['d'] ?? false;
-		$where_clause = null;
 		if ( $directives && 'all' !== \mb_strtolower( $directives ) ) {
 			$directives     = \explode( ',', \mb_strtolower( $directives ) );
 			$elem_attr_dirs = array( 'script-src', 'style-src' );
@@ -190,7 +193,19 @@ class Dashboard extends AbstractSettingsHandler {
 			$sql_directives = \array_map( function ( $val ) {
 				return "'" . \esc_sql( $val ) . "'";
 			}, $directives );
-			$where_clause = 'WHERE violated_directive IN (' . \implode( ',', $sql_directives ) . ')';
+			$where_clauses[] = 'violated_directive IN (' . \implode( ',', $sql_directives ) . ')';
+		}
+
+		$filter_status = $_GET['fs'] ?? false;
+		if ( $filter_status && filter_var( $filter_status, FILTER_VALIDATE_INT ) ) {
+			$filter_status = \intval( $filter_status );
+			if ( $filter_status > -1 && $filter_status < 600 ) {
+				$where_clauses[] = "status_code != '" . \esc_sql( $filter_status ) . "'";
+			}
+		}
+
+		if ( count($where_clauses) > 0 ) {
+			$where_clause = 'WHERE ' . \implode( ' AND ', $where_clause );
 		}
 
 		global $wpdb;

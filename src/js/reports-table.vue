@@ -14,6 +14,22 @@
 				placeholder="Showing all"
 			/>
 		</div>
+		<div>
+			<label for="hideStatusZero">
+				<input
+					type="checkbox"
+					v-model="hideStatusZero"
+					id="hideStatusZero"
+					v-on:click="
+						hideStatusZero = !hideStatusZero;
+						loadFromServer();
+					"
+				/>
+				Filter Status 0
+				<br />
+				<small>(Non-network requests)</small>
+			</label>
+		</div>
 		<div v-if="statusMessage">{{ statusMessage }}</div>
 	</div>
 	<EasyDataTable
@@ -107,6 +123,8 @@ export default defineComponent({
 			'worker-src': 'worker-src',
 		};
 
+		const hideStatusZero = ref(true);
+
 		const serverOptions = ref({
 			page: 1,
 			rowsPerPage: 15,
@@ -124,6 +142,7 @@ export default defineComponent({
 				s: sortBy,
 				o: sortType,
 				d: effectiveDirective.value.join(','),
+				fs: hideStatusZero.value ? 0 : -1,
 			});
 			return `${config.url}?${vars.toString()}`;
 		});
@@ -235,6 +254,7 @@ export default defineComponent({
 			flushServer,
 			matchThisOrigin,
 			uaDecoder,
+			hideStatusZero,
 		};
 	},
 });
