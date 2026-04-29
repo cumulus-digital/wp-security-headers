@@ -197,7 +197,7 @@ class Dashboard extends AbstractSettingsHandler {
 		}
 
 		$filter_status = $_GET['fs'] ?? false;
-		if ( $filter_status && filter_var( $filter_status, FILTER_VALIDATE_INT ) ) {
+		if ( filter_var( $filter_status, FILTER_VALIDATE_INT ) ) {
 			$filter_status = \intval( $filter_status );
 			if ( $filter_status > -1 && $filter_status < 600 ) {
 				$where_clauses[] = "status_code != '" . \esc_sql( $filter_status ) . "'";
